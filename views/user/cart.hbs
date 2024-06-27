@@ -1,0 +1,109 @@
+<style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        .cart {
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .product-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+        }
+        .quantity-buttons {
+            display: flex;
+            align-items: center;
+        }
+        .quantity-buttons button {
+            margin: 0 0.5rem;
+        }
+        .total-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center my-4">Your Shopping Cart</h1>
+        {{#if product }}
+        <div class="cart">
+            <ul class="list-group">
+                {{#each product }}
+                <li class="list-group-item clearfix">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <img src="/product-images/{{this.product._id}}.png" alt="{{this.product.name}}" class="product-image">
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <strong>{{ this.product.name }}</strong><br/>
+                            <em>{{{this.product.description}}}</em>
+                        </div>
+                        <div class="col-md-2 text-right">
+                            <div class="quantity-buttons">
+                                <button class="btn btn-sm btn-outline-secondary" id="cart-count-" onclick="changequantity('{{this._id}}','{{this.product._id}}',-1,0,'{{../user}}')">-</button>
+                                <span class="badge badge-secondary" id="{{this.product._id}}">{{this.quantity}}</span>
+                                <button class="btn btn-sm btn-outline-secondary" id="cart-count+" onclick="changequantity('{{this._id}}','{{this.product._id}}',1,0,'{{../user}}')">+</button>
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-right">
+                            Rs.{{this.product.price}} 
+                        </div>
+                        <div class="col-md-2 text-right">
+                            <button class="btn btn-danger" onclick="changequantity('{{this._id}}','{{this.product._id}}',-1)">Remove</button>
+                        </div>
+                    </div>
+                </li>
+                {{/each}}
+            </ul>
+            <div class="text-right my-3">
+                <span class="total-price">Total:Rs.<span id="total">{{total}}</span> </span>
+            </div>
+            <hr>
+            <div class="text-right">
+                <a href="check-out" type="button" class="btn btn-success">Checkout</a>
+            </div>
+        </div>
+        {{ else }}
+        <div class="alert alert-info text-center">
+            Your shopping cart is empty.
+        </div>
+        {{/if}}
+    </div>
+
+    <script>
+        function changequantity(cartid, proid ,count ,remove ,userid) {
+            let quantity=parseInt(document.getElementById(proid).innerHTML)
+            count=parseInt(count)
+            console.log("url:'/change-product-quantity' called");
+            $.ajax({
+                url: '/change-product-quantity',
+                data: {
+                    user:userid,
+                    cart: cartid,
+                    product: proid,
+                    count: count,
+                    quantity:quantity,
+                    remove:remove
+                },
+                method: 'post',
+                success: (response) => { 
+                if (response.removeproduct) {
+                    alert("product removed from cart")
+                    location.reload()
+                }else{
+                    document.getElementById(proid).innerHTML=quantity+count
+                    document.getElementById('total').innerHTML=response.total
+                }
+
+
+        } });
+        }
+    </script>
