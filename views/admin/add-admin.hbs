@@ -1,96 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Admin</title>
+    <style>
+        /* public/stylesheets/style.css */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full viewport height */
+            background-color: #f0f0f0;
+        }
 
-    <h1>Add Admin</h1>
-    
-    {{#if success}}
-        <p style="color: green;">Admin added successfully!</p>
-    {{/if}}
-<div class="hi">
-    <form action="/admin/add-admin" method="POST">
-        <label for="name">Admin Name:</label><br>
-        <input type="text" id="name" name="name" required><br><br>
+        .form-container {
+            max-width: 400px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
 
-        <label for="email">Email:</label><br>
-        <input type="email" id="email" name="email" required><br><br>
+        h1 {
+            color: #333;
+            text-align: center;
+        }
 
-        <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password" required><br><br>
+        form {
+            padding: 0; /* Reset padding for form inside container */
+        }
 
-        <input type="submit" value="Add Admin">
-    </form>
+        label {
+            font-weight: bold;
+        }
 
-    <a href="/admin">Back to Admin Panel</a>
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
 
-<style>
-    /* public/stylesheets/style.css */
-    .hi {
-        max-width: 400px;
-        margin: 0 auto; /* Center the container horizontally */
-        padding: 20px; /* Add padding for better spacing */
-    }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
 
-    /* Additional styles for form styling */
-    .container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh; /* Full viewport height */
-        background-color: #f0f0f0;
-    }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
 
-    .form-container {
-        max-width: 400px;
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-    }
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            color: #007bff;
+            text-decoration: none;
+        }
 
-    h1 {
-        color: #333;
-        text-align: center;
-    }
+        a:hover {
+            text-decoration: underline;
+        }
 
-    form {
-        padding: 0; /* Reset padding for form inside container */
-    }
+        @media (max-width: 600px) {
+            .form-container {
+                padding: 15px;
+                margin: 10px;
+            }
 
-    label {
-        font-weight: bold;
-    }
+            input[type="text"],
+            input[type="email"],
+            input[type="password"] {
+                width: calc(100% - 15px);
+                padding: 8px;
+            }
 
-    input[type="text"],
-    input[type="email"],
-    input[type="password"] {
-        width: calc(100% - 20px);
-        padding: 10px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
+            input[type="submit"] {
+                padding: 10px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h1>Add Admin</h1>
+            {{#if success}}
+                <p style="color: green;">Admin added successfully!</p>
+            {{/if}}
+            <form action="/admin/add-admin" method="POST">
+                <label for="name">Admin Name:</label><br>
+                <input type="text" id="name" name="name" required><br><br>
 
-    input[type="submit"] {
-        background-color: #4CAF50;
-        color: white;
-        padding: 12px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
+                <label for="email">Email:</label><br>
+                <input type="email" id="email" name="email" required><br><br>
 
-    input[type="submit"]:hover {
-        background-color: #45a049;
-    }
+                <label for="password">Password:</label><br>
+                <input type="password" id="password" name="password" required><br><br>
 
-    a {
-        display: block;
-        text-align: center;
-        margin-top: 10px;
-        color: #007bff;
-        text-decoration: none;
-    }
+                <input type="submit" value="Add Admin">
+            </form>
 
-    a:hover {
-        text-decoration: underline;
-    }
-</style>
+            <a href="/admin">Back to Admin Panel</a>
+        </div>
+    </div>
+</body>
+</html>

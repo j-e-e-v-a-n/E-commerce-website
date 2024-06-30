@@ -1,5 +1,12 @@
-<style>
-    body {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Information</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
             background-color: #f2f2f2;
@@ -57,118 +64,127 @@
         .status-buttons button:hover {
             background-color: #45a049;
         }
-</style>
-
-<h1>All Orders</h1>
-
-<!-- Search Bar -->
-<input type="text" id="searchInput" onkeyup="searchOrders()" placeholder="Search for orders...">
-<div class="order-list">
-    {{#each details}}
-    <div class="order-item">
-        <h2>Order Details</h2>
-        <table>
-            <tr>
-                <th>Order ID</th>
-                <td>{{_id}}</td>
-            </tr>
-            <tr>
-                <th>Status</th>
-                <td>
-                    {{status}}
-                    <div class="status-buttons">
-                        <button onclick="changeStatus('{{_id}}', 'hi', 'Order placed')">Order placed</button>
-                        <button onclick="changeStatus('{{_id}}', 'hi', 'Order accepted')">Order accepted</button>
-                        <button onclick="changeStatus('{{_id}}', 'hi', 'Shipped')">Shipped</button>
-                        <button onclick="changeStatus('{{_id}}', 'hi', 'delivered')">Mark Delivered</button>
-                        <button onclick="changeStatus('{{_id}}', 'hi', 'cancelled')">Cancel</button>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <th>Date</th>
-                <td>{{date}}</td>
-            </tr>
-        </table>
-
-        <div class="delivery-details">
-            <h3>Delivery Details</h3>
-            <table>
-                <tr>
-                    <th>Mobile</th>
-                    <td>{{deliveryDetails.mobile}}</td>
-                </tr>
-                <tr>
-                    <th>Address</th>
-                    <td>{{deliveryDetails.address}}</td>
-                </tr>
-                <tr>
-                    <th>Pincode</th>
-                    <td>{{deliveryDetails.pincode}}</td>
-                </tr>
-            </table>
-        </div>
-
-        <h3>Payment Method</h3>
-        <p>{{paymentmethod}}</p>
-
-        <h3>Products</h3>
-        <table>
-            <tr>
-                <th>Item</th>
-                <th>Quantity</th>
-            </tr>
-            {{#each products}}
-            <tr>
-                <td>{{this.item}}</td>
-                <td>{{this.quantity}}</td>
-            </tr>
-            {{/each}}
-        </table>
-
-        <p>Total Amount: ${{totalamount}}</p>
-    </div>
-    {{/each}}
-</div>
-
-<!-- Include jQuery for AJAX and highlighting functionality -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script>
-    function changeStatus(id, item, status) {
-        console.log(id, item, status);
-        $.ajax({
-            url: '/admin/changeStatus',
-            data: {
-                id: id,
-                item: item,
-                status: status,
-            },
-            method: 'post',
-            success: function (response) {
-                if (response) {
-                    alert("Status updated");
-                    location.reload();
-                }
-            }
-        });
-    }
-
-    function searchOrders() {
-        var input, filter, orderList, orders, txtValue;
-        input = document.getElementById('searchInput');
-        filter = input.value.toUpperCase();
-        orderList = document.getElementsByClassName('order-item');
-
-        for (var i = 0; i < orderList.length; i++) {
-            orders = orderList[i].getElementsByTagName('table')[0];
-            txtValue = orders.textContent || orders.innerText;
-
-            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                orderList[i].style.display = "";
-            } else {
-                orderList[i].style.display = "none";
+        @media (max-width: 768px) {
+            .order-item {
+                padding: 10px;
             }
         }
-    }
-</script>
+    </style>
+</head>
+<body>
+    <h1 class="text-center">All Orders</h1>
+
+    <!-- Search Bar -->
+    <div class="form-group">
+        <input type="text" id="searchInput" class="form-control" onkeyup="searchOrders()" placeholder="Search for orders...">
+    </div>
+    <div class="order-list">
+        {{#each details}}
+        <div class="order-item">
+            <h2>Order Details</h2>
+            <table>
+                <tr>
+                    <th>Order ID</th>
+                    <td>{{_id}}</td>
+                </tr>
+                <tr>
+                    <th>Status</th>
+                    <td>
+                        {{status}}
+                        <div class="status-buttons">
+                            <button onclick="changeStatus('{{_id}}', 'Order placed')">Order placed</button>
+                            <button onclick="changeStatus('{{_id}}', 'Order accepted')">Order accepted</button>
+                            <button onclick="changeStatus('{{_id}}', 'Shipped')">Shipped</button>
+                            <button onclick="changeStatus('{{_id}}', 'Delivered')">Mark Delivered</button>
+                            <button onclick="changeStatus('{{_id}}', 'Cancelled')">Cancel</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Date</th>
+                    <td>{{date}}</td>
+                </tr>
+            </table>
+
+            <div class="delivery-details">
+                <h3>Delivery Details</h3>
+                <table>
+                    <tr>
+                        <th>Mobile</th>
+                        <td>{{deliveryDetails.mobile}}</td>
+                    </tr>
+                    <tr>
+                        <th>Address</th>
+                        <td>{{deliveryDetails.address}}</td>
+                    </tr>
+                    <tr>
+                        <th>Pincode</th>
+                        <td>{{deliveryDetails.pincode}}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <h3>Payment Method</h3>
+            <p>{{paymentmethod}}</p>
+
+            <h3>Products</h3>
+            <table>
+                <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                </tr>
+                {{#each products}}
+                <tr>
+                    <td>{{this.item}}</td>
+                    <td>{{this.quantity}}</td>
+                </tr>
+                {{/each}}
+            </table>
+
+            <p>Total Amount: ${{totalamount}}</p>
+        </div>
+        {{/each}}
+    </div>
+
+    <!-- Include jQuery for AJAX and search functionality -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        function changeStatus(id, status) {
+            console.log(id, status);
+            $.ajax({
+                url: '/admin/changeStatus',
+                data: {
+                    id: id,
+                    status: status
+                },
+                method: 'POST',
+                success: function (response) {
+                    if (response) {
+                        alert("Status updated");
+                        location.reload();
+                    }
+                }
+            });
+        }
+
+        function searchOrders() {
+            var input, filter, orderList, orders, txtValue;
+            input = document.getElementById('searchInput');
+            filter = input.value.toUpperCase();
+            orderList = document.getElementsByClassName('order-item');
+
+            for (var i = 0; i < orderList.length; i++) {
+                orders = orderList[i].getElementsByTagName('table')[0];
+                txtValue = orders.textContent || orders.innerText;
+
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    orderList[i].style.display = "";
+                } else {
+                    orderList[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>
+</html>

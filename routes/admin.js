@@ -188,7 +188,7 @@ router.post('/delete-admin/:id',issuperuser,(req,res)=>{
    res.redirect('/all-admins')
   })
 })
-router.post('/delete-user/:id',issuperuser,(req,res)=>{
+router.post('/delete-user/:id',isAdminAuthenticated,(req,res)=>{
   producthelper.deleteuser(req.params.id).then((response)=>{
    res.redirect('/admin/allusers')
   })

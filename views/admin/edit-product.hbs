@@ -1,39 +1,87 @@
-<section>
-  <div class="container mt-4">
-    <div class="row">
-      <div class="col-md-6">
-        <h2 class="text-center">Edit Product</h2>
-        <form action="/admin/edit-product/{{product._id}}" method="POST" enctype="multipart/form-data">
-          <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" name="name" class="form-control" value="{{product.name}}">
-          </div>
-          <div class="form-group">
-            <label for="category">Category</label>
-            <input type="text" name="category" class="form-control" value="{{product.category}}">
-          </div>
-          <div class="form-group">
-            <label for="price">Price</label>
-            <input type="number" name="price" class="form-control" value="{{product.price}}">
-          </div>
-          <div class="form-group">
-            <label for="description">Description</label>
-            <input type="text" name="description" class="form-control" value="{{product.description}}">
-          </div>
-          <div class="form-group">
-            <label for="image">Image</label><br><br>
-                    <img style="width: auto;height:150px;" src="/product-images/{{product._id}}.png" id="imgview" alt=""><br><br>
-            <input type="file" name="image" class="form-control-file" id="image" onchange="viewimg(event)">
-          </div>
-          <button type="submit" class="btn btn-success mt-4" >Submit</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</section>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .form-container {
+            background-color: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px 0px #00000029;
+        }
+        h2.text-center {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+        img#imgview {
+            width: auto;
+            height: 150px;
+            display: block;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <section>
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-md-8 col-lg-6 mx-auto">
+                    <div class="form-container">
+                        <h2 class="text-center">Edit Product</h2>
+                        <form action="/admin/edit-product/{{product._id}}" method="POST" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" name="name" class="form-control" value="{{product.name}}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="category">Category</label>
+                                <input type="text" name="category" class="form-control" value="{{product.category}}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="price">Price</label>
+                                <input type="number" name="price" class="form-control" value="{{product.price}}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <input type="text" name="description" class="form-control" value="{{product.description}}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="image">Image</label><br>
+                                <img src="/product-images/{{product._id}}.png" id="imgview" alt="Product Image">
+                                <input type="file" name="image" class="form-control-file" id="image" onchange="viewimg(event)">
+                            </div>
+                            <button type="submit" class="btn btn-success mt-4">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<script>
-  function viewimg(event){
-    document.getElementById('imgview').src=URL.createObjectURL(event.target.files[0])
-  }
-</script>
+    <script>
+        function viewimg(event) {
+            document.getElementById('imgview').src = URL.createObjectURL(event.target.files[0]);
+        }
+    </script>
+
+    <!-- Include Bootstrap JS and dependencies (optional but recommended) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
