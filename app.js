@@ -12,6 +12,7 @@ var db=require('./config/connection');
 var session=require('express-session')
 const app = express();
 
+
 // View engine setup
 app.engine('hbs', hbs.engine({
     extname: 'hbs',
@@ -29,11 +30,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(fileupload());
 app.use(session({
-    secret: 'your_secret_here',
+    secret: 'your_secret_key',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false } // Adjust options as needed
-}));
+  }));
 
 db.connect((err)=>{
     if(err) console.log('Connection err'+ err);

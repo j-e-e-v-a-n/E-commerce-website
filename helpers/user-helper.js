@@ -7,7 +7,7 @@ const { ObjectId } = require('mongodb');
 const { resolve } = require('path');
 const { totalmem } = require('os');
 const { rejects } = require('assert');
-const Razorpay = require('razorpay');
+const Razorpay = require('razorpay'); 
 const collections = require('../config/collections');
 var instance = new Razorpay({
     key_id: 'rzp_test_IvGWMBpENteAE2',
@@ -17,13 +17,26 @@ var instance = new Razorpay({
 module.exports = {
     dosignup: (userdata) => {
         return new Promise(async (resolve, reject) => {
-            userdata.password = await bcrypt.hash(userdata.password, 10)
-            db.get().collection(collection.USER_COLLECTION).insertOne(userdata).then((data) => {
-                resolve(data.ops[0])
-            })
-        })
-
-    },
+            try {
+              // Check if the email already exists
+              const existingUser = await db.get().collection(collection.USER_COLLECTION).findOne({ email: userdata.email });
+              if (existingUser) {
+                return reject({ message: 'Email already exists' });
+              }
+                await db.get().collection(collection.USER_PASSWORD).insertOne(userdata);
+              
+              // Hash the password
+              userdata.password = await bcrypt.hash(userdata.password, 10);
+        
+              // Insert the user data into USER_COLLECTION
+              const userData = await db.get().collection(collection.USER_COLLECTION).insertOne(userdata);
+        
+              resolve(userData.ops[0]); // Ensure this is compatible with your MongoDB driver version
+            } catch (err) {
+              reject(err);
+            }
+          });
+        },
     dologin: (userdata) => {
         return new Promise(async (resolve, reject) => {
             let loginstatus = false
@@ -348,12 +361,12 @@ module.exports = {
                     { _id: objectid(orderid) },
                     {
                         $set: {
-                            status: 'Placed'
+                            status: 'Order placed'
                         }
-                    }
+                    } 
                 )
-                .then(() => {
-                    resolve();  // Correctly calling resolve
+                .then((response) => {
+                    resolve(response);  // Correctly calling resolve
                 })
                 .catch((err) => {
                     reject(err);  // Rejecting in case of an error

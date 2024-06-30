@@ -1,17 +1,26 @@
 <section>
     <div class="container mt-5">
-        <form action="" id="checkout-form">
+        <form action="" id="checkout-form" onsubmit="return validateForm()">
             <div class="row">
                 <div class="col-md-6">
                     <h2>Enter Delivery Details</h2>
-                    <label for="address">Address</label>
-                    <input class="form-control" type="text" name="address" id="address">
-                    <label for="pincode">Pincode</label>
-                    <input class="form-control" type="text" name="pincode" id="pincode">
-                    <label for="mobile">Mobile</label>
-                    <input class="form-control" type="text" id="mobile" name="mobile">
-                    
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <input class="form-control" type="text" name="address" id="address" required>
+                        <small id="address-error" class="form-text text-danger"></small>
+                    </div>
+                    <div class="form-group">
+                        <label for="pincode">Pincode</label>
+                        <input class="form-control" type="text" name="pincode" id="pincode" required>
+                        <small id="pincode-error" class="form-text text-danger"></small>
+                    </div>
+                    <div class="form-group">
+                        <label for="mobile">Mobile</label>
+                        <input class="form-control" type="tel" id="mobile" name="mobile" required>
+                        <small id="mobile-error" class="form-text text-danger"></small>
+                    </div>
                     <input type="text" name="userid" id="userid" value="{{user}}" hidden>
+                    <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
 
                 <div class="col-md-6">
@@ -52,19 +61,54 @@
     .payment {
         padding-bottom: 16px;
     }
+    .form-text.text-danger {
+        display: none;
+    }
 </style>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $("#checkout-form").submit((e) => {  
-        e.preventDefault(); 
-        
+    function validateForm() {
+        const pincodeInput = document.getElementById('pincode');
+        const mobileInput = document.getElementById('mobile');
+
+        const pincode = pincodeInput.value;
+        const mobile = mobileInput.value;
+
+        let isValid = true;
+
+        if (pincode.length !== 6 || isNaN(pincode)) {
+            document.getElementById('pincode-error').innerText = 'Pincode must be 6 digits long.';
+            document.getElementById('pincode-error').style.display = 'block';
+            isValid = false;
+        } else {
+            document.getElementById('pincode-error').style.display = 'none';
+        }
+
+        if (mobile.length !== 10 || isNaN(mobile)) {
+            document.getElementById('mobile-error').innerText = 'Mobile number must be 10 digits long.';
+            document.getElementById('mobile-error').style.display = 'block';
+            isValid = false;
+        } else {
+            document.getElementById('mobile-error').style.display = 'none';
+        }
+
+        return isValid;
+    }
+
+    $("#checkout-form").submit((e) => {
+        e.preventDefault();
+
+        if (!validateForm()) {
+            return;
+        }
+
         $.ajax({
             url: '/place-order',
             method: 'post',
             data: $('#checkout-form').serialize(),
             success: (response) => {
-                
                 if (response.COD_success) {
                     location.href = '/ordersuccess';
                 } else {
@@ -73,7 +117,7 @@
             }
         });
     });
-                
+
     function razorpayPayment(order) {
         var options = {
             "key": "rzp_test_IvGWMBpENteAE2", // Enter the Key ID generated from the Dashboard
@@ -101,7 +145,7 @@
         var rzp1 = new Razorpay(options);
         rzp1.open();
     }
-    
+
     function verifyPayment(payment, order) {
         $.ajax({
             url: '/verify-payment',
@@ -110,11 +154,11 @@
                 order: order
             },
             method: 'post',
-            success:(response)=>{
-                if(response.status){
+            success: (response) => {
+                if (response.status) {
                     location.href = '/ordersuccess';
-                }else{
-                    alert('payment failed')
+                } else {
+                    alert('Payment failed');
                 }
             }
         });

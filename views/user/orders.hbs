@@ -7,19 +7,20 @@
     <table class="table">
       <thead>
         <tr>
-          <th scope="col">Date</th>
+          <th scope="col">Order id</th>
           <th scope="col">Address</th>
           <th scope="col">Pincode</th>
           <th scope="col">Mobile</th>
           <th scope="col">Amount</th>
           <th scope="col">Payment</th>
           <th scope="col">Status</th>
+          <th scope="col">Products</th>
         </tr>
       </thead>
       <tbody>
         {{#each orders}}
         <tr>
-          <td>{{this.date}}</td>
+          <td>{{this._id}}</td>
           <td>{{this.deliveryDetails.address}}</td>
           <td>{{this.deliveryDetails.pincode}}</td>
           <td>{{this.deliveryDetails.mobile}}</td>

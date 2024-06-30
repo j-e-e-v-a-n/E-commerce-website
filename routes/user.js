@@ -3,8 +3,11 @@ var router = express.Router();
 var producthelper = require('../helpers/product-helpers')
 const userhelper = require('../helpers/user-helper');
 const { log } = require('console');
+var useralreadyexist
 const verifylogin = (req, res, next) => {
-  if (req.session.loggedin) {
+  console.log(req.session);
+  console.log(req.session.user)
+  if (req.session.user) {
     next()
   } else {
     res.redirect('/login')
@@ -12,7 +15,7 @@ const verifylogin = (req, res, next) => {
 
 }
 /* GET home page. */
-router.get('/', async function (req, res, next) {
+router.get('/',verifylogin, async function (req, res, next) {
   let user = req.session.user
   let cartcount = null
   if (req.session.user) {
@@ -25,53 +28,72 @@ router.get('/', async function (req, res, next) {
 });
 router.get('/login', (req, res) => {
   console.log(req.session.loggedin)
-  if (req.session.loggedin) {
+  if (req.session.user) {
     res.redirect('/')
   } else {
-    res.render('user/login', { "loginerr": req.session.loginerr })
-    req.session.loginerr = null
+    res.render('user/login', { "loginerr": req.session.userloginerr })
+    req.session.userloginerr = false
   }
 })
 router.get('/signup', (req, res) => {
-  res.render('user/signup')
-})
-router.post('/signup', (req, res) => {
-  userhelper.dosignup(req.body).then((response) => {
+  const userexist = req.session.userexist || '';
+  req.session.userexist = false // Reset the message after reading it
+  res.render('user/signup', { 'userexist': userexist });
+});
+
+router.post('/signup', async (req, res) => {
+  try {
+    const response = await userhelper.dosignup(req.body);
     console.log(response);
-    req.session.loggedin = true
-    req.session.user = response
-    user = true
-    res.redirect('/')
-  })
-})
+    req.session.user = response;
+    res.redirect('/');
+  } catch (err) {
+    console.error(err);
+    req.session.userexist = "Account already exists in this E-mail. Please login.";
+    res.redirect('/signup');
+  }
+});
+
 router.post('/login', (req, res) => {
   userhelper.dologin(req.body).then((response) => {
     if (response.status) {
-      req.session.loggedin = true
       req.session.user = response.user
+      req.session.user.loggedin = true
       res.redirect('/')
     }
     else {
-      req.session.loginerr = "Invalid username or password"
+      req.session.userloginerr = "Invalid username or password"
       res.redirect('/login')
     }
   })
 })
 router.get('/logout', (req, res) => {
-  req.session.destroy()
+  req.session.user = null
   res.redirect('/')
 })
 router.get('/cart', verifylogin, async (req, res) => {
   console.log("cart")
-  let total = await userhelper.gettotalamount(req.session.user._id)
   let product = await userhelper.getcartproducts(req.session.user._id)
+  let total=0
+  if(product.length>0){
+   total = await userhelper.gettotalamount(req.session.user._id)
+  }
   res.render('user/cart', { product, user: req.session.user._id,total })
 })
-router.get('/add-to-cart/:id',verifylogin, (req, res) => {
-  userhelper.addtocart(req.params.id, req.session.user._id).then(() => {
-    res.json({ status: true })
-
-  })
+router.get('/add-to-cart/:id', (req, res) => {
+  console.log(req.session);
+  console.log(req.session.user)
+  if (req.session.user) {
+    console.log(req.session.loggedin)
+    console.log(req.session.user);
+    userhelper.addtocart(req.params.id, req.session.user._id).then(() => {
+      res.json({ status: true })
+  
+    })
+  } else {
+    res.redirect('/login')
+  }
+ 
 })
 router.post('/change-product-quantity', (req, res, next) => {
   console.log(req.body);
@@ -105,7 +127,7 @@ router.post('/place-order', async (req, res) => {
   })
   
 });
-router.get('/ordersuccess',(req,res)=>{
+router.get('/ordersuccess',verifylogin,(req,res)=>{
  res.render('user/order-success' , {user:req.session.user})
 })
 router.get('/orders' ,verifylogin ,async(req,res)=>{
@@ -123,7 +145,7 @@ router.get('/view-order-products/:id',verifylogin ,async(req, res)=>{
     console.log(req.body);
     userhelper.verifyPayment(req.body).then(() => {
         userhelper.changepaymentstatus(req.body['order[receipt]']).then(() => {
-          console.log('pyment sucessfull');
+          console.log('payment sucessfull');
             res.json({ status: true });
         })
     }).catch((err) => {

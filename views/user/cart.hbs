@@ -1,11 +1,21 @@
-<style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-            color: #343a40;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f1f3f6;
+            color: #212121;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 2rem auto;
         }
         .cart {
-            margin: 2rem auto;
             padding: 2rem;
             background-color: #ffffff;
             border-radius: 0.5rem;
@@ -22,10 +32,39 @@
         }
         .quantity-buttons button {
             margin: 0 0.5rem;
+            background-color: #2874f0;
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+        }
+        .quantity-buttons button:hover {
+            background-color: #1a5bb8;
         }
         .total-price {
             font-size: 1.5rem;
             font-weight: bold;
+            color: #2874f0;
+        }
+        .btn-danger {
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+        }
+        .btn-danger:hover {
+            background-color: #e64a19;
+        }
+        .btn-success {
+            background-color: #388e3c;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+        }
+        .btn-success:hover {
+            background-color: #2e7d32;
         }
     </style>
 </head>
@@ -48,9 +87,9 @@
                         </div>
                         <div class="col-md-2 text-right">
                             <div class="quantity-buttons">
-                                <button class="btn btn-sm btn-outline-secondary" id="cart-count-" onclick="changequantity('{{this._id}}','{{this.product._id}}',-1,0,'{{../user}}')">-</button>
+                                <button class="btn btn-sm" id="cart-count-" onclick="changequantity('{{this._id}}','{{this.product._id}}',-1,0,'{{../user}}')">-</button>
                                 <span class="badge badge-secondary" id="{{this.product._id}}">{{this.quantity}}</span>
-                                <button class="btn btn-sm btn-outline-secondary" id="cart-count+" onclick="changequantity('{{this._id}}','{{this.product._id}}',1,0,'{{../user}}')">+</button>
+                                <button class="btn btn-sm" id="cart-count+" onclick="changequantity('{{this._id}}','{{this.product._id}}',1,0,'{{../user}}')">+</button>
                             </div>
                         </div>
                         <div class="col-md-2 text-right">
@@ -64,7 +103,7 @@
                 {{/each}}
             </ul>
             <div class="text-right my-3">
-                <span class="total-price">Total:Rs.<span id="total">{{total}}</span> </span>
+                <span class="total-price">Total: Rs.<span id="total">{{total}}</span> </span>
             </div>
             <hr>
             <div class="text-right">
@@ -80,30 +119,31 @@
 
     <script>
         function changequantity(cartid, proid ,count ,remove ,userid) {
-            let quantity=parseInt(document.getElementById(proid).innerHTML)
-            count=parseInt(count)
+            let quantity = parseInt(document.getElementById(proid).innerHTML);
+            count = parseInt(count);
             console.log("url:'/change-product-quantity' called");
             $.ajax({
                 url: '/change-product-quantity',
                 data: {
-                    user:userid,
+                    user: userid,
                     cart: cartid,
                     product: proid,
                     count: count,
-                    quantity:quantity,
-                    remove:remove
+                    quantity: quantity,
+                    remove: remove
                 },
                 method: 'post',
                 success: (response) => { 
-                if (response.removeproduct) {
-                    alert("product removed from cart")
-                    location.reload()
-                }else{
-                    document.getElementById(proid).innerHTML=quantity+count
-                    document.getElementById('total').innerHTML=response.total
+                    if (response.removeproduct) {
+                        alert("Product removed from cart");
+                        location.reload();
+                    } else {
+                        document.getElementById(proid).innerHTML = quantity + count;
+                        document.getElementById('total').innerHTML = response.total;
+                    }
                 }
-
-
-        } });
+            });
         }
     </script>
+</body>
+</html>

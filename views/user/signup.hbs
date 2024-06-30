@@ -1,22 +1,64 @@
 <div class="row">
     <div class="col-md-6 mt-5 pl-5 m-auto">
-        <h2 class="text=center">Create new account</h2>
-        <form action="/signup" method="POST">
+        <h2 class="text-center">Create new account</h2>
+        <form action="/signup" method="POST" onsubmit="capitalizeNames(); return validatePhoneNumber();">
+            {{#if userexist}}
+                <p class="error text-center text-danger">{{userexist}}</p>
+            {{/if}}
             <div class="form-group">
-                <label for="">Name</label>
-                <input type="text" class="form-control" name="name" placeholder="Enter Name" id="">
+                <label for="firstName">First Name</label>
+                <input type="text" class="form-control" name="firstName" placeholder="Enter First Name" id="firstName" required>
             </div>
             <div class="form-group">
-                <label for="">Email address</label>
-                <input type="email" class="form-control" name="email" placeholder="Enter a email address" id="">
+                <label for="lastName">Last Name</label>
+                <input type="text" class="form-control" name="lastName" placeholder="Enter Last Name" id="lastName" required>
             </div>
             <div class="form-group">
-                <label for="">Password</label>
-                <input type="password" class="form-control" name="password" placeholder="Password" id="">
+                <label for="email">Email address</label>
+                <input type="email" class="form-control" name="email" placeholder="Enter an email address" id="email" required>
             </div>
-            <a href="/login">Already have account</a>
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" class="form-control" name="phone" placeholder="Enter Phone Number" id="phone" required>
+                <small class="form-text text-muted">Phone number must be 10 digits long.</small>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" name="password" placeholder="Password" id="password" required>
+            </div>
+            <a href="/login">Already have an account</a>
             <button type="submit" class="btn btn-primary float-right">Signup</button>
         </form>
     </div>
-
 </div>
+
+<script>
+    function capitalizeNames() {
+        const firstNameInput = document.getElementById('firstName');
+        const lastNameInput = document.getElementById('lastName');
+
+        let firstName = firstNameInput.value;
+        let lastName = lastNameInput.value;
+
+        if (firstName.length > 0) {
+            firstName = firstName[0].toUpperCase() + firstName.slice(1);
+        }
+        if (lastName.length > 1) {
+            lastName = lastName[0] + lastName[1].toUpperCase() + lastName.slice(2);
+        }
+
+        firstNameInput.value = firstName;
+        lastNameInput.value = lastName;
+    }
+
+    function validatePhoneNumber() {
+        const phoneInput = document.getElementById('phone');
+        const phone = phoneInput.value;
+
+        if (phone.length !== 10 || isNaN(phone)) {
+            alert('Phone number must be 10 digits long.');
+            return false;
+        }
+        return true;
+    }
+</script>

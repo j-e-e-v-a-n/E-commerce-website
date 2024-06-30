@@ -1,0 +1,96 @@
+
+    <h1>Add Admin</h1>
+    
+    {{#if success}}
+        <p style="color: green;">Admin added successfully!</p>
+    {{/if}}
+<div class="hi">
+    <form action="/admin/add-admin" method="POST">
+        <label for="name">Admin Name:</label><br>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <input type="submit" value="Add Admin">
+    </form>
+
+    <a href="/admin">Back to Admin Panel</a>
+
+<style>
+    /* public/stylesheets/style.css */
+    .hi {
+        max-width: 400px;
+        margin: 0 auto; /* Center the container horizontally */
+        padding: 20px; /* Add padding for better spacing */
+    }
+
+    /* Additional styles for form styling */
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* Full viewport height */
+        background-color: #f0f0f0;
+    }
+
+    .form-container {
+        max-width: 400px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    h1 {
+        color: #333;
+        text-align: center;
+    }
+
+    form {
+        padding: 0; /* Reset padding for form inside container */
+    }
+
+    label {
+        font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+        width: calc(100% - 20px);
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    input[type="submit"] {
+        background-color: #4CAF50;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+
+    a {
+        display: block;
+        text-align: center;
+        margin-top: 10px;
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+</style>
