@@ -113,19 +113,29 @@ router.get('/check-out', verifylogin,async(req,res,next)=>{
 
 })
 router.post('/place-order', async (req, res) => {
-  let products = await userhelper.getcartproductlist(req.body.userid)
-  let totalprice =await userhelper.gettotalamount(req.body.userid)
-  userhelper.placeorder(req.body,products,totalprice).then((orderid)=>{
-    if(req.body['payment-method']=='COD'){
-      res.json({COD_success:true})
-      }else{
-      userhelper.generateRazorpay(orderid,totalprice).then((response)=>{
-        res.json(response)
-        
-      })  
+  try {
+      let products = await userhelper.getcartproductlist(req.body.userid);
+      if (products.length === 0) {
+          // Handle case where cart is empty
+          res.status(400).json({ error: 'Cart is empty' });
+          return;
       }
-  })
-  
+
+      let totalprice = await userhelper.gettotalamount(req.body.userid);
+
+      userhelper.placeorder(req.body, products, totalprice).then((orderid) => {
+          if (req.body['payment-method'] === 'COD') {
+              res.json({ COD_success: true });
+          } else {
+              userhelper.generateRazorpay(orderid, totalprice).then((response) => {
+                  res.json(response);
+              });
+          }
+      });
+  } catch (error) {
+      console.error('Error placing order:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
 });
 router.get('/ordersuccess',verifylogin,(req,res)=>{
  res.render('user/order-success' , {user:req.session.user})
@@ -138,7 +148,6 @@ router.get('/orders' ,verifylogin ,async(req,res)=>{
 })
 router.get('/view-order-products/:id',verifylogin ,async(req, res)=>{
   let products=await userhelper.getorderproducts(req.params.id)
-  console.log(products);
   res.render('user/view-order-products', {user:req.session.user, products})
   })
   router.post('/verify-payment', (req, res) => {

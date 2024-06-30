@@ -163,17 +163,36 @@ router.get('/alluserss', issuperuser, (req, res) => {
 });
 
 // List all orders
-router.get('/allorders', isAdminAuthenticated, (req, res) => {
-  producthelper.getorderedproduct().then((details) => {
-    let admins=req.session.admin
-    res.render('admin/all-orders', { admin: true, details,admins });
-  });
+router.get('/allorders', isAdminAuthenticated, async (req, res) => {
+  try {
+    const details = await producthelper.getorderedproduct();
+
+    for (const order of details) {
+      console.log(order.userid);
+      let orders = await userhelper.getallorders(order.userid);
+      order.orders = orders; // Assuming you want to attach orders to each order detail
+    }
+
+    const admins = req.session.admin;
+    res.render('admin/all-orders', { admin: true, details, admins });
+  } catch (err) {
+    // Handle errors appropriately
+    console.error(err);
+    res.status(500).send('Error retrieving orders');
+  }
 });
 
+router.get('/view-order-productss/:id',isAdminAuthenticated ,async(req, res)=>{
+  console.log(req.params.id);
+  let products=req.params.id
+  res.render('admin/view-order-productss', {user:req.session.user, products})
+  })
+
 // Change product status
-router.post('/changeSstatus', isAdminAuthenticated, (req, res) => {
+router.post('/changeStatus', isAdminAuthenticated, (req, res) => {
   producthelper.changeproductstatus(req.body).then((response) => {
-    res.json({ status: true });
+    console.log(response);
+    res.json({ status: true }); 
   });
 });
 router.get('/all-admins', issuperuser, (req, res) => {

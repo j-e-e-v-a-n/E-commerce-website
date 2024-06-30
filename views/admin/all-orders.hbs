@@ -55,13 +55,16 @@
         .status-buttons button {
             margin-right: 10px;
             padding: 8px 16px;
-            background-color: #4CAF50;
+            
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
         }
-        .status-buttons button:hover {
+          .btns{
+            background-color: #4CAF50;
+        }
+        .btns:hover {
             background-color: #45a049;
         }
         @media (max-width: 768px) {
@@ -92,12 +95,13 @@
                     <td>
                         {{status}}
                         <div class="status-buttons">
-                            <button onclick="changeStatus('{{_id}}', 'Order placed')">Order placed</button>
-                            <button onclick="changeStatus('{{_id}}', 'Order accepted')">Order accepted</button>
-                            <button onclick="changeStatus('{{_id}}', 'Shipped')">Shipped</button>
-                            <button onclick="changeStatus('{{_id}}', 'Delivered')">Mark Delivered</button>
-                            <button onclick="changeStatus('{{_id}}', 'Cancelled')">Cancel</button>
-                        </div>
+                            <button class="btns" onclick="changeStatus('{{_id}}', 'Order placed')">Order placed</button>
+                            <button class="btns" onclick="changeStatus('{{_id}}', 'Order accepted')">Order accepted</button>
+                            <button class="btns" onclick="changeStatus('{{_id}}', 'Shipped')">Shipped</button>
+                            <button class="btns" onclick="changeStatus('{{_id}}', 'Delivered')">Mark Delivered</button>
+                            <button class="btns" onclick="changeStatus('{{_id}}', 'Cancelled')">Cancel</button>
+                            <button class="btn btn-danger" onclick="changeStatus('{{_id}}', '1')">Delete</button>
+                        
                     </td>
                 </tr>
                 <tr>
@@ -132,16 +136,21 @@
                 <tr>
                     <th>Item</th>
                     <th>Quantity</th>
+                    <th>Action</th>
                 </tr>
                 {{#each products}}
                 <tr>
                     <td>{{this.item}}</td>
                     <td>{{this.quantity}}</td>
+                    <td><a href="/admin/view-order-productss/{{this.item}}" class="btn btn-primary">View Products</a> </td>
                 </tr>
                 {{/each}}
             </table>
 
             <p>Total Amount: ${{totalamount}}</p>
+            {{#each orders}}
+                {{/each}}
+
         </div>
         {{/each}}
     </div>

@@ -33,7 +33,8 @@ module.exports = {
         let products=await db.get().collection(collection.PRODUCT_COLLECTION).find().toArray()
         resolve(products)
       })
-    },  
+    },
+
     deleteproduct:(proid)=>{
         return new Promise((resolve,reject)=>{
           db.get().collection(collection.PRODUCT_COLLECTION).removeOne({_id:objectid(proid)}).then((response)=>{
@@ -82,31 +83,52 @@ module.exports = {
     },
      changeproductstatus:(data) => {
       console.log(data)
-      return new Promise((resolve, reject) => {
-          db.get().collection(collections.ORDER_COLLECTION)
-              .updateOne( 
-                  { _id: objectid(data.id) },
-                  {
-                      $set: {
-                          status: data.status
-                      }
-                  }
-              )
-              .then((response) => {
-                  if (response.matchedCount === 0) {
-                      console.log('No documents matched the query. Please check the orderId:', data.orderId);
-                  }
-                  if (response.modifiedCount === 0 && response.matchedCount > 0) {
-                      console.log('The document was found but the status was already "hi".');
-                  }
-                  resolve(response);
-                  console.log('Update response:', response);
-              })
-              .catch((err) => {
-                  console.log('Error occurred while updating:', err);
-                  reject(err);
-              });
+      if(data.status == '1'){
+        return new Promise((resolve, reject) => {
+        db.get().collection(collection.ORDER_COLLECTION).removeOne({ _id: objectid(data.id) })
+        .then((response) => {
+          if (response.matchedCount === 0) {
+              console.log('No documents matched the query. Please check the orderId:', data.orderId);
+          }
+          if (response.modifiedCount === 0 && response.matchedCount > 0) {
+              console.log('The document was found but the status was already "hi".');
+          }
+          resolve(response);
+          console.log('Update response:', response);
+      })
+      .catch((err) => {
+          console.log('Error occurred while updating:', err);
+          reject(err);
       });
+});
+    }
+    else{
+                return new Promise((resolve, reject) => {
+                  db.get().collection(collections.ORDER_COLLECTION)
+                      .updateOne( 
+                          { _id: objectid(data.id) },
+                          {
+                              $set: {
+                                  status: data.status
+                              }
+                          }
+                      )
+                      .then((response) => {
+                          if (response.matchedCount === 0) {
+                              console.log('No documents matched the query. Please check the orderId:', data.orderId);
+                          }
+                          if (response.modifiedCount === 0 && response.matchedCount > 0) {
+                              console.log('The document was found but the status was already "hi".');
+                          }
+                          resolve(response);
+                          console.log('Update response:', response);
+                      })
+                      .catch((err) => {
+                          console.log('Error occurred while updating:', err);
+                          reject(err);
+                      });
+              });
+    }
   },
   dologin: (adminData) => {
     let admin=false
