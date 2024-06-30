@@ -1,3 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Checkout Form</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        input[type=radio] {
+            width: 20px;
+            height: 20px;
+        }
+        label.radio-inline {
+            display: flex;
+            align-items: center;
+        }
+        .checkout {
+            border: 1px solid;
+            border-radius: 3px;
+            padding: 30px;
+        }
+        .payment {
+            padding-bottom: 16px;
+        }
+        .form-text.text-danger {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
 <section>
     <div class="container mt-5">
         <form action="" id="checkout-form" onsubmit="return validateForm()">
@@ -19,11 +50,11 @@
                         <input class="form-control" type="tel" id="mobile" name="mobile" required>
                         <small id="mobile-error" class="form-text text-danger"></small>
                     </div>
-                    <input type="text" name="userid" id="userid" value="{{user}}" hidden>
+                    <input type="hidden" name="userid" id="userid" value="{{user}}">
                 </div>
 
                 <div class="col-md-6">
-                    <div class="container mt-5 ml-5 checkout bg-light">
+                    <div class="container mt-5 checkout bg-light">
                         <h5>Total Amount: Rs.{{total}}</h5>
                         <br>
                         <div class="payment">
@@ -34,7 +65,7 @@
                             <label class="radio-inline mt-2">
                                 <input type="radio" name="payment-method" value="online"> Online Payment
                             </label>
-                            <button type="submit" class="btn btn-primary float-right">Checkout</button>
+                            <button type="submit" class="btn btn-primary btn-block mt-3">Checkout</button>
                         </div>
                     </div>
                 </div>
@@ -43,30 +74,8 @@
     </div>
 </section>
 
-<style>
-    input[type=radio] {
-        width: 20px;
-        height: 20px;
-    }
-    label.radio-inline {
-        display: flex;
-        align-items: center;
-    }
-    .checkout {
-        border: 1px solid;
-        border-radius: 3px;
-        padding: 30px;
-    }
-    .payment {
-        padding-bottom: 16px;
-    }
-    .form-text.text-danger {
-        display: none;
-    }
-</style>
-
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 <script>
     function validateForm() {
         const pincodeInput = document.getElementById('pincode');
@@ -96,36 +105,38 @@
         return isValid;
     }
 
-    $("#checkout-form").submit((e) => {
-        e.preventDefault();
+    $(document).ready(function() {
+        $("#checkout-form").submit(function(e) {
+            e.preventDefault();
 
-        if (!validateForm()) {
-            return;
-        }
-
-        $.ajax({
-            url: '/place-order',
-            method: 'post',
-            data: $('#checkout-form').serialize(),
-            success: (response) => {
-                if (response.COD_success) {
-                    location.href = '/ordersuccess';
-                } else {
-                    razorpayPayment(response);
-                }
+            if (!validateForm()) {
+                return;
             }
+
+            $.ajax({
+                url: '/place-order',
+                method: 'post',
+                data: $('#checkout-form').serialize(),
+                success: function(response) {
+                    if (response.COD_success) {
+                        location.href = '/ordersuccess';
+                    } else {
+                        razorpayPayment(response);
+                    }
+                }
+            });
         });
     });
 
     function razorpayPayment(order) {
         var options = {
-            "key": "rzp_test_IvGWMBpENteAE2", // Enter the Key ID generated from the Dashboard
+            "key": "rzp_test_IvGWMBpENteAE2", // Replace with your Razorpay Key
             "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise or INR 500.
             "currency": "INR",
             "name": "Jeevan",
             "description": "Test Transaction",
-            "image": "https://example.com/your_logo", // Ensure the URL is correct
-            "order_id": order.id, // This is a sample Order ID. Pass the 'id' obtained in the response of Step 1
+            "image": "https://example.com/your_logo", // Replace with your logo URL
+            "order_id": order.id, // Pass the 'id' obtained in the response of Step 1
             "handler": function (response) {
                 verifyPayment(response, order);
             },
@@ -153,7 +164,7 @@
                 order: order
             },
             method: 'post',
-            success: (response) => {
+            success: function(response) {
                 if (response.status) {
                     location.href = '/ordersuccess';
                 } else {
@@ -163,3 +174,6 @@
         });
     }
 </script>
+
+</body>
+</html>

@@ -6,13 +6,13 @@
     <title>Order Confirmation</title>
     <style>
         body {
-            margin: 0;
             font-family: 'Arial', sans-serif;
             background-color: #f4f7f6;
         }
 
         .confirmation-container {
             background: white;
+            width: 600px; /* Default width for larger screens */
             padding: 40px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -90,6 +90,13 @@
             }
             to {
                 opacity: 1;
+            }
+        }
+
+        /* Media query for smaller screens */
+        @media (max-width: 600px) {
+            .confirmation-container {
+                width: 350px; /* Adjusted width for smaller screens */
             }
         }
     </style>

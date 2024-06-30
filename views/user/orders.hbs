@@ -1,43 +1,57 @@
 <section>
-  <div class="container   ">
+  <div class="container">
     <br>
-    <div class="row st-4">
-      <a href="/" class="btn btn-success align-self-auto">Add Product</a>
-    </div><br>
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">Order id</th>
-          <th scope="col">Address</th>
-          <th scope="col">Pincode</th>
-          <th scope="col">Mobile</th>
-          <th scope="col">Amount</th>
-          <th scope="col">Payment</th>
-          <th scope="col">Status</th>
-          <th scope="col">Products</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{#each orders}}
-        <tr>
-          <td>{{this._id}}</td>
-          <td>{{this.deliveryDetails.address}}</td>
-          <td>{{this.deliveryDetails.pincode}}</td>
-          <td>{{this.deliveryDetails.mobile}}</td>
-          <td>{{this.totalamount}}</td>
-          <td>{{this.paymentmethod}}</td>
-          <td>{{this.status}}</td>
-         <td> <a href="/view-order-products/{{this._id}}" class="btn btn-primary">View Products</a></td>
-              
-        </tr>
-
-        {{/each}}
-      </tbody>
-    </table>
+    <div class="row justify-content-end">
+      <div class="col-auto">
+        <a href="/" class="btn btn-success">Add Product</a>
+      </div>
+    </div>
+    <br>
+    <div class="table-responsive">
+      <table id="table" class="table">
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Address</th>
+            <th scope="col">Pincode</th>
+            <th scope="col">Mobile</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Payment</th>
+            <th scope="col">Status</th>
+            <th scope="col">Products</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each orders}}
+          <tr>
+            <td>{{this.date}}</td>
+            <td>{{this.deliveryDetails.address}}</td>
+            <td>{{this.deliveryDetails.pincode}}</td>
+            <td>{{this.deliveryDetails.mobile}}</td>
+            <td>{{this.totalamount}}</td>
+            <td>{{this.paymentmethod}}</td>
+            <td>{{this.status}}</td>
+            <td><a href="/view-order-products/{{this._id}}" class="btn btn-primary">View Products</a></td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>
+
 <style>
-  .row{
-    margin-left: 88%;
+  /* Adjustments for responsiveness */
+  @media (max-width: 768px) {
+    .row {
+      margin-left: 0;
+      margin-right: 0;
+      justify-content: center; /* Center align button on small screens */
+    }
   }
 </style>
+<script>
+        $(document).ready(function() {
+            $('#table').DataTable();
+        });
+    </script>
