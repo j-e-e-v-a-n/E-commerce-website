@@ -3,14 +3,13 @@ var router = express.Router();
 var producthelper = require('../helpers/product-helpers')
 const userhelper = require('../helpers/user-helper');
 const { log } = require('console');
-var useralreadyexist
 const verifylogin = (req, res, next) => {
   console.log(req.session);
   console.log(req.session.user)
   if (req.session.user) {
     next()
   } else {
-    res.redirect('/login')
+    res.redirect('/signup')
   }
 
 }
@@ -72,13 +71,14 @@ router.get('/logout', (req, res) => {
   res.redirect('/')
 })
 router.get('/cart', verifylogin, async (req, res) => {
+  let user = req.session.user
   console.log("cart")
   let product = await userhelper.getcartproducts(req.session.user._id)
   let total=0
   if(product.length>0){
    total = await userhelper.gettotalamount(req.session.user._id)
   }
-  res.render('user/cart', { product, user: req.session.user._id,total })
+  res.render('user/cart', { product, userid: req.session.user._id,total,user })
 })
 router.get('/add-to-cart/:id', (req, res) => {
   console.log(req.session);

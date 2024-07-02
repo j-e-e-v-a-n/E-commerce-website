@@ -28,19 +28,6 @@
             font-size: 24px;
             color: #333;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
         .delivery-details {
             margin-top: 15px;
         }
@@ -51,25 +38,65 @@
         }
         .status-buttons {
             margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
         }
         .status-buttons button {
-            margin-right: 10px;
+            margin: 5px;
             padding: 8px 16px;
-            
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            flex: 1 1 calc(33.333% - 10px);
+            text-align: center;
         }
-          .btns{
+        .btns {
             background-color: #4CAF50;
         }
         .btns:hover {
             background-color: #45a049;
         }
+        .btn-danger {
+            background-color: #f44336;
+        }
+        .btn-danger:hover {
+            background-color: #d32f2f;
+        }
         @media (max-width: 768px) {
             .order-item {
                 padding: 10px;
+            }
+            table, th, td {
+                font-size: 14px;
+            }
+            .status-buttons button {
+                padding: 6px 12px;
+                flex: 1 1 calc(50% - 10px);
+            }
+            .delivery-details h3 {
+                font-size: 18px;
+            }
+            .order-item h2 {
+                font-size: 20px;
+            }
+        }
+        @media (max-width: 576px) {
+            .order-item {
+                padding: 8px;
+            }
+            table, th, td {
+                font-size: 12px;
+            }
+            .status-buttons button {
+                padding: 4px 8px;
+                flex: 1 1 100%;
+            }
+            .delivery-details h3 {
+                font-size: 16px;
+            }
+            .order-item h2 {
+                font-size: 18px;
             }
         }
     </style>
@@ -85,7 +112,7 @@
         {{#each details}}
         <div class="order-item">
             <h2>Order Details</h2>
-            <table>
+            <table class="table table-responsive">
                 <tr>
                     <th>Order ID</th>
                     <td>{{_id}}</td>
@@ -101,7 +128,7 @@
                             <button class="btns" onclick="changeStatus('{{_id}}', 'Delivered')">Mark Delivered</button>
                             <button class="btns" onclick="changeStatus('{{_id}}', 'Cancelled')">Cancel</button>
                             <button class="btn btn-danger" onclick="changeStatus('{{_id}}', '1')">Delete</button>
-                        
+                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -112,7 +139,7 @@
 
             <div class="delivery-details">
                 <h3>Delivery Details</h3>
-                <table>
+                <table class="table table-responsive">
                     <tr>
                         <th>Mobile</th>
                         <td>{{deliveryDetails.mobile}}</td>
@@ -132,25 +159,26 @@
             <p>{{paymentmethod}}</p>
 
             <h3>Products</h3>
-            <table>
-                <tr>
-                    <th>Item</th>
-                    <th>Quantity</th>
-                    <th>Action</th>
-                </tr>
-                {{#each products}}
-                <tr>
-                    <td>{{this.item}}</td>
-                    <td>{{this.quantity}}</td>
-                    <td><a href="/admin/view-order-productss/{{this.item}}" class="btn btn-primary">View Products</a> </td>
-                </tr>
-                {{/each}}
+            <table class="table table-responsive">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each products}}
+                    <tr>
+                        <td>{{this.item}}</td>
+                        <td>{{this.quantity}}</td>
+                        <td><a href="/admin/view-order-productss/{{this.item}}" class="btn btn-primary">View Products</a></td>
+                    </tr>
+                    {{/each}}
+                </tbody>
             </table>
 
             <p>Total Amount: ${{totalamount}}</p>
-            {{#each orders}}
-                {{/each}}
-
         </div>
         {{/each}}
     </div>

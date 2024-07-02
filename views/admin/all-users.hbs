@@ -9,6 +9,15 @@
     <!-- Include DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css">
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+        .container {
+            max-width: 960px; /* Adjust container max-width for responsiveness */
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -30,35 +39,47 @@
             background-color: #218838;
             border-color: #1e7e34;
         }
+        @media (max-width: 768px) {
+            table {
+                font-size: 14px; /* Adjust font size for smaller screens */
+            }
+        }
+        @media (max-width: 576px) {
+            table {
+                font-size: 12px; /* Further adjust font size for extra small screens */
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2 class="text-center my-4">User Information</h2>
-        <table id="myTable" class="table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Password</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#each users}}
-                <tr>
-                    <td>{{this.firstName}} {{this.lastName}}</td>
-                    <td>{{this.email}}</td>
-                    <td>{{this.password}}</td>
-                    <td>
-                        <form action="/admin/delete-user/{{this._id}}" method="POST">
-                            <button class="btn btn-success" type="submit">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-                {{/each}}
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table id="myTable" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each users}}
+                    <tr>
+                        <td>{{this.firstName}} {{this.lastName}}</td>
+                        <td>{{this.email}}</td>
+                        <td>{{this.phone}}</td>
+                        <td>
+                            <form action="/admin/delete-user/{{this._id}}" method="POST">
+                                <button class="btn btn-success" type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- Include jQuery and DataTables JS -->

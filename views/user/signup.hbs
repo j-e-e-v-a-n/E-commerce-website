@@ -43,8 +43,8 @@
         if (firstName.length > 0) {
             firstName = firstName[0].toUpperCase() + firstName.slice(1);
         }
-        if (lastName.length > 1) {
-            lastName = lastName[0] + lastName[1].toUpperCase() + lastName.slice(2);
+        if (lastName.length > 0) {
+            lastName = lastName[0] + lastName[0].toUpperCase() + lastName.slice(2);
         }
 
         firstNameInput.value = firstName;

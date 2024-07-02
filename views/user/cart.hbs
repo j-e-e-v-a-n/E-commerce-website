@@ -6,19 +6,25 @@
     <title>Shopping Cart</title>
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f1f3f6;
-            color: #212121;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5; /* Light gray background */
+            color: #333; /* Dark text color */
+            margin: 0;
+            padding: 0;
         }
         .container {
             width: 90%;
             max-width: 1200px;
             margin: 2rem auto;
+            background-color: #fff; /* White background */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         .cart {
-            padding: 2rem;
-            background-color: #ffffff;
+            padding: 1rem;
             border-radius: 0.5rem;
+            background-color: #ffffff; /* White background */
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         .product-image {
@@ -32,39 +38,63 @@
         }
         .quantity-buttons button {
             margin: 0 0.5rem;
-            background-color: #2874f0;
-            color: white;
-            border: none;
+            background-color: #1565c0; /* Blue button */
+            border-color: #1565c0; /* Matching border color */
+            color: #fff; /* White text color */
             padding: 0.5rem;
             border-radius: 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
         .quantity-buttons button:hover {
-            background-color: #1a5bb8;
+            background-color: #1e88e5; /* Darker blue on hover */
+            border-color: #1e88e5; /* Matching border color on hover */
         }
         .total-price {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #2874f0;
+            color: #1565c0; /* Blue */
         }
         .btn-danger {
-            background-color: #ff5722;
+            background-color: #d32f2f; /* Red */
             color: white;
             border: none;
             padding: 0.5rem 1rem;
             border-radius: 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
         .btn-danger:hover {
-            background-color: #e64a19;
+            background-color: #b71c1c; /* Darker red on hover */
         }
         .btn-success {
-            background-color: #388e3c;
+            background-color: #388e3c; /* Green */
             color: white;
             border: none;
             padding: 0.5rem 1rem;
             border-radius: 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
         .btn-success:hover {
-            background-color: #2e7d32;
+            background-color: #2e7d32; /* Darker green on hover */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                width: 100%;
+                padding: 0.5rem;
+            }
+            .cart {
+                padding: 0.5rem;
+            }
+            .quantity-buttons button {
+                padding: 0.3rem;
+            }
+            .btn {
+                padding: 0.3rem 0.7rem;
+            }
         }
     </style>
 </head>
@@ -87,23 +117,23 @@
                         </div>
                         <div class="col-md-2 text-right">
                             <div class="quantity-buttons">
-                                <button class="btn btn-sm" id="cart-count-" onclick="changequantity('{{this._id}}','{{this.product._id}}',-1,0,'{{../user}}')">-</button>
+                                <button class="btn btn-sm" onclick="changequantity('{{this._id}}','{{this.product._id}}', -1, 0, '{{../userid}}')">-</button>
                                 <span class="badge badge-secondary" id="{{this.product._id}}">{{this.quantity}}</span>
-                                <button class="btn btn-sm" id="cart-count+" onclick="changequantity('{{this._id}}','{{this.product._id}}',1,0,'{{../user}}')">+</button>
+                                <button class="btn btn-sm" onclick="changequantity('{{this._id}}','{{this.product._id}}', 1, 0, '{{../userid}}')">+</button>
                             </div>
                         </div>
                         <div class="col-md-2 text-right">
                             Rs.{{this.product.price}} 
                         </div>
                         <div class="col-md-2 text-right">
-                            <button class="btn btn-danger" onclick="changequantity('{{this._id}}','{{this.product._id}}',-1)">Remove</button>
+                            <button class="btn btn-danger" onclick="changequantity('{{this._id}}','{{this.product._id}}', -1, 1)">Remove</button>
                         </div>
                     </div>
                 </li>
                 {{/each}}
             </ul>
             <div class="text-right my-3">
-                <span class="total-price">Total: Rs.<span id="total">{{total}}</span> </span>
+                <span class="total-price">Total: Rs.<span id="total">{{total}}</span></span>
             </div>
             <hr>
             <div class="text-right">
@@ -117,11 +147,14 @@
         {{/if}}
     </div>
 
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
     <script>
-        function changequantity(cartid, proid ,count ,remove ,userid) {
+        function changequantity(cartid, proid, count, remove, userid) {
             let quantity = parseInt(document.getElementById(proid).innerHTML);
             count = parseInt(count);
-            console.log("url:'/change-product-quantity' called");
             $.ajax({
                 url: '/change-product-quantity',
                 data: {
@@ -133,7 +166,7 @@
                     remove: remove
                 },
                 method: 'post',
-                success: (response) => { 
+                success: (response) => {
                     if (response.removeproduct) {
                         alert("Product removed from cart");
                         location.reload();
