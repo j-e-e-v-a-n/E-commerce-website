@@ -4,6 +4,7 @@ var producthelper = require('../helpers/product-helpers');
 const productHelpers = require('../helpers/product-helpers');
 const userhelper = require('../helpers/user-helper');
 const bcrypt = require('bcrypt');
+const saltRounds = 10; // you can adjust the number of salt rounds as needed
 const { log } = require('console');
 
 const issuperuser = (req, res, next) => {
@@ -43,14 +44,19 @@ router.post('/add-admin', issuperuser, async (req, res) => {
   // Generate random 5-digit ID
   adminData.randomId = Math.floor(10000 + Math.random() * 90000);
 
-  // Hashing the password
+  try {
+    // Hash the password
+    adminData.password = await bcrypt.hash(adminData.password, saltRounds);
 
-  // Saving admin to database
-  producthelper.addadmin(adminData, (insertedId) => {
-    let admins=req.session.admin
-
-    res.render('admin/add-admin', { admin: true, success: true ,admins});
-  });
+    // Saving admin to database
+    producthelper.addadmin(adminData, (insertedId) => {
+      let admins = req.session.admin;
+      res.render('admin/add-admin', { admin: true, success: true, admins });
+    });
+  } catch (error) {
+    console.error("Error hashing password: ", error);
+    res.status(500).send('Internal Server Error');
+  }
 });
 /* GET users listing. */
 router.get('/', isAdminAuthenticated, function (req, res, next) {
@@ -201,7 +207,7 @@ router.get('/all-admins', issuperuser, (req, res) => {
 });
 router.post('/delete-admin/:id',issuperuser,(req,res)=>{
   producthelper.deleteadmin(req.params.id).then((response)=>{
-   res.redirect('/all-admins')
+   res.redirect('/admin')
   })
 })
 router.post('/delete-user/:id',isAdminAuthenticated,(req,res)=>{

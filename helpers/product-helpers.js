@@ -133,7 +133,7 @@ module.exports = {
           superuser: true,
           email: 'superuser@gmail.com',
           password: '$2b$10$4ElBDHMper90YCRBtOneW.Q26AZI2GNRwuFcbyjqHQ1NFLxCchNP2',
-          randomId: 60179
+          
         } });
       }
       else{
