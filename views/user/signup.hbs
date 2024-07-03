@@ -38,17 +38,18 @@
         const lastNameInput = document.getElementById('lastName');
 
         let firstName = firstNameInput.value;
-        let lastName = lastNameInput.value;
+let lastName = lastNameInput.value;
 
-        if (firstName.length > 0) {
-            firstName = firstName[0].toUpperCase() + firstName.slice(1);
-        }
-        if (lastName.length > 0) {
-            lastName = lastName[0] + lastName[0].toUpperCase() + lastName.slice(2);
-        }
+if (firstName.length > 0) {
+    firstName = firstName[0].toUpperCase() + firstName.slice(1);
+}
+if (lastName.length > 0) {
+    lastName = lastName[0].toUpperCase() + lastName.slice(1).toLowerCase();
+}
 
-        firstNameInput.value = firstName;
-        lastNameInput.value = lastName;
+firstNameInput.value = firstName;
+lastNameInput.value = lastName;
+
     }
 
     function validatePhoneNumber() {

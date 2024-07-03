@@ -44,9 +44,6 @@ router.post('/add-admin', issuperuser, async (req, res) => {
   adminData.randomId = Math.floor(10000 + Math.random() * 90000);
 
   // Hashing the password
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(adminData.password, salt);
-  adminData.password = hashedPassword;
 
   // Saving admin to database
   producthelper.addadmin(adminData, (insertedId) => {

@@ -11,16 +11,18 @@
             justify-content: center;
             align-items: center;
             height: 100vh; /* Full viewport height */
-            background-color: #f0f0f0;
+            padding: 20px; /* Add padding to ensure spacing on small screens */
         }
 
         .form-container {
             max-width: 400px;
             background-color: #fff;
             padding: 20px;
+            margin-top: auto;
+            margin-bottom: 30080px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+            width: 100%; /* Ensure form container takes full width on small screens */
         }
 
         h1 {
@@ -74,7 +76,6 @@
         @media (max-width: 600px) {
             .form-container {
                 padding: 15px;
-                margin: 10px;
             }
 
             input[type="text"],
@@ -88,6 +89,25 @@
                 padding: 10px 15px;
             }
         }
+
+        @media (max-width: 400px) {
+            .form-container {
+                padding: 10px;
+                margin-top: auto;
+                margin-bottom: 30px;
+            }
+
+            input[type="text"],
+            input[type="email"],
+            input[type="password"] {
+                width: calc(100% - 10px);
+                padding: 6px;
+            }
+
+            input[type="submit"] {
+                padding: 8px 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -97,9 +117,9 @@
             {{#if success}}
                 <p style="color: green;">Admin added successfully!</p>
             {{/if}}
-            <form action="/admin/add-admin" method="POST">
-                <label for="name">Admin Name:</label><br>
-                <input type="text" id="name" name="name" required><br><br>
+            <form action="/admin/add-admin" method="POST" onsubmit="formatNames()">
+                <label for="firstName">First Name:</label><br>
+                <input type="text" id="firstName" name="firstName" required><br><br>
 
                 <label for="email">Email:</label><br>
                 <input type="email" id="email" name="email" required><br><br>
@@ -113,5 +133,17 @@
             <a href="/admin">Back to Admin Panel</a>
         </div>
     </div>
+    <script>
+        function formatNames() {
+            let firstNameInput = document.getElementById('firstName');
+            let firstName = firstNameInput.value.trim();
+
+            if (firstName.length > 0) {
+                firstName = firstName[0].toUpperCase() + firstName.slice(1).toLowerCase();
+            }
+
+            firstNameInput.value = firstName;
+        }
+    </script>
 </body>
 </html>

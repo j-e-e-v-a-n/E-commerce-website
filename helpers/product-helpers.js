@@ -16,13 +16,6 @@ module.exports = {
     },
      // Function to add a new admin
      addadmin: async (adminData, callback) => {
-      // Check if the current admin is a super user
-      let currentAdmin = await db.get().collection(collection.ADMIN_COLLECTION).findOne({ _id: adminData._id });
-      
-      if (!currentAdmin.isSuperUser) {
-        throw new Error('Only super users can add new admins.');
-      }
-  
       // Proceed with adding the new admin if current admin is a super user
       db.get().collection(collection.ADMIN_COLLECTION).insertOne(adminData).then((data) => {
         callback(data.ops[0]._id);
