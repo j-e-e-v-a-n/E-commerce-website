@@ -10,6 +10,7 @@ const adminRouter = require('./routes/admin');
 const hbs = require('express-handlebars');
 var db=require('./config/connection');
 var session=require('express-session')
+const MongoStore = require('connect-mongo');
 const app = express();
 
 
@@ -33,6 +34,9 @@ app.use(session({
     secret: 'your_secret_key',
     resave: false,
     saveUninitialized: true,
+    store: MongoStore.create({
+    mongoUrl: 'mongodb+srv://user:ADhL0KH37CX52xV2@cluster0.cvupke0.mongodb.net/yourDatabaseName?retryWrites=true&w=majority'
+  })
   }));
 
 db.connect((err)=>{
