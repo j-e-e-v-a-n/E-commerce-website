@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "npm start",
+    "start": "node user.js",
     "build": "npm install"
   },
   "dependencies": {
