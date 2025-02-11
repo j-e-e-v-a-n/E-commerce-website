@@ -10,7 +10,7 @@ const adminRouter = require('./routes/admin');
 const hbs = require('express-handlebars');
 var db=require('./config/connection');
 var session=require('express-session')
-
+require('dotenv').config(); // Load environment variables from .env file
 const app = express();
 
 
@@ -19,7 +19,12 @@ app.engine('hbs', hbs.engine({
     extname: 'hbs',
     defaultLayout: 'layout',
     layoutsDir: path.join(__dirname, 'views', 'layout'),
-    partialsDir: path.join(__dirname, 'views', 'partials')
+    partialsDir: path.join(__dirname, 'views', 'partials'),
+    helpers: {
+        json: function(context) {
+            return JSON.stringify(context);
+        }
+    }
 }));
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
@@ -57,5 +62,11 @@ app.use((err, req, res, next) => {
     res.status(err.status || 500);
     res.render('error');
 });
+app.get('/razorpay-keys', (req, res) => {
+    res.json({
+        keyId: process.env.RAZORPAY_KEY_ID
+    });
+});
+
 
 module.exports = app;

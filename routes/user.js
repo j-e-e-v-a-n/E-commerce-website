@@ -9,12 +9,12 @@ const verifylogin = (req, res, next) => {
   if (req.session.user) {
     next()
   } else {
-    res.redirect('/signup')
+    res.redirect('/login')
   }
 
 }
 /* GET home page. */
-router.get('/',verifylogin, async function (req, res, next) {
+router.get('/', async function (req, res, next) {
   let user = req.session.user
   let cartcount = null
   if (req.session.user) {
@@ -80,7 +80,7 @@ router.get('/cart', verifylogin, async (req, res) => {
   }
   res.render('user/cart', { product, userid: req.session.user._id,total,user })
 })
-router.get('/add-to-cart/:id', (req, res) => {
+router.get('/add-to-cart/:id',verifylogin, (req, res) => {
   console.log(req.session);
   console.log(req.session.user)
   if (req.session.user) {
@@ -112,31 +112,50 @@ router.get('/check-out', verifylogin,async(req,res,next)=>{
   res.render('user/place-order', {total, user:req.session.user._id })
 
 })
+
 router.post('/place-order', async (req, res) => {
   try {
-      let products = await userhelper.getcartproductlist(req.body.userid);
-      if (products.length === 0) {
-          // Handle case where cart is empty
-          res.status(400).json({ error: 'Cart is empty' });
-          return;
+      let products = await userhelper.getcartproducts(req.body.userid);
+
+      if (!products || products.length === 0) {
+          return res.status(400).json({ error: 'Cart is empty' });
       }
 
       let totalprice = await userhelper.gettotalamount(req.body.userid);
 
-      userhelper.placeorder(req.body, products, totalprice).then((orderid) => {
-          if (req.body['payment-method'] === 'COD') {
-              res.json({ COD_success: true });
-          } else {
-              userhelper.generateRazorpay(orderid, totalprice).then((response) => {
-                  res.json(response);
-              });
-          }
-      });
+      // Place the order
+      userhelper.placeorder(req.body, products, totalprice)
+          .then((orderid) => {
+              console.log("Order placed successfully:", orderid);  // Add log for order placement
+
+              if (req.body['payment-method'] === 'COD') {
+                  res.json({ COD_success: true });
+              } else {
+                  // Handle Razorpay payment
+                  userhelper.generateRazorpay(orderid, totalprice)
+                      .then((response) => {
+                          console.log("Razorpay payment response:", response);  // Add log for Razorpay response
+                          res.json(response);
+                      })
+                      .catch((error) => {
+                          console.error("Error in generateRazorpay:", error);
+                          res.status(500).json({ error: "Payment processing error" });
+                      });
+              }
+          })
+          .catch((error) => {
+              console.error("Error in placing order:", error);
+              res.status(500).json({ error: "Failed to place order" });
+          });
+
   } catch (error) {
-      console.error('Error placing order:', error);
-      res.status(500).json({ error: 'Internal server error' });
+      console.error("Error in /place-order:", error);
+      res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+
+
 router.get('/ordersuccess',verifylogin,(req,res)=>{
  res.render('user/order-success' , {user:req.session.user})
 })

@@ -5,7 +5,7 @@ const state = {
 };
 
 module.exports.connect = function(done) {
-  const url = 'mongodb+srv://user:ADhL0KH37CX52xV2@cluster0.cvupke0.mongodb.net/';
+  const url = process.env.MONGO_URI;
   const dbname = 'shopping';
 
   MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {

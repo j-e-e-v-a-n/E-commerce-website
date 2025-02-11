@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        p, ul {
+            font-size: 18px;
+            color: #555;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background: #eef;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        canvas {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Statistics</h1>
+        <p><strong>Total Sales for Current Month:</strong> ${{totalSalesCurrentMonth}}</p>
+
+        <h3>Sales by Month:</h3>
+        <canvas id="salesChart"></canvas>
+
+        <p><strong>Total Products Sold:</strong> {{totalProductsSold}}</p>
+        <p><strong>Total Active Users:</strong> {{activeUsers}}</p>
+        <p><strong>Total Orders:</strong> {{totalOrders}}</p>
+
+        <h3>Top Products:</h3>
+        <canvas id="topProductsChart"></canvas>
+    </div>
+
+    <script>
+        const salesData = {{{json salesData}}};
+        const topProducts = {{{json topProducts}}};
+
+        const salesChartCtx = document.getElementById('salesChart').getContext('2d');
+        new Chart(salesChartCtx, {
+            type: 'bar',
+            data: {
+                labels: salesData.map(s => s.month),
+                datasets: [{
+                    label: 'Sales',
+                    data: salesData.map(s => s.sales),
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                }]
+            }
+        });
+
+        const topProductsChartCtx = document.getElementById('topProductsChart').getContext('2d');
+        new Chart(topProductsChartCtx, {
+            type: 'pie',
+            data: {
+                labels: topProducts.map(p => p.name),
+                datasets: [{
+                    data: topProducts.map(p => p.soldCount),
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#9C27B0']
+                }]
+            }
+        });
+    </script>
+</body>
+</html>

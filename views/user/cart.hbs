@@ -147,36 +147,63 @@
         {{/if}}
     </div>
 
-    <!-- jQuery and Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <!-- jQuery and Bootstrap JS --> 
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <script>
-        function changequantity(cartid, proid, count, remove, userid) {
-            let quantity = parseInt(document.getElementById(proid).innerHTML);
-            count = parseInt(count);
-            $.ajax({
-                url: '/change-product-quantity',
-                data: {
-                    user: userid,
-                    cart: cartid,
-                    product: proid,
-                    count: count,
-                    quantity: quantity,
-                    remove: remove
-                },
-                method: 'post',
-                success: (response) => {
-                    if (response.removeproduct) {
-                        alert("Product removed from cart");
-                        location.reload();
-                    } else {
-                        document.getElementById(proid).innerHTML = quantity + count;
-                        document.getElementById('total').innerHTML = response.total;
-                    }
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Ensure jQuery is loaded -->
+
+<script>
+    function changequantity(cartid, proid, count, remove, userid, price) {
+        let quantityElement = document.getElementById(proid);
+        let totalElement = document.getElementById('total');
+        let itemRow = document.getElementById(`cart-item-${proid}`);
+
+        let currentQuantity = parseInt(quantityElement.innerText) || 0;
+        let totalPrice = parseFloat(totalElement.innerText) || 0;
+
+        let newQuantity = currentQuantity + count;
+        let newTotal = totalPrice + (count * price);
+
+        // Ensure values never go below 0
+        if (newQuantity < 0) return;
+
+        // ✅ Instantly update UI to prevent delay
+        quantityElement.innerText = newQuantity;
+        totalElement.innerText = newTotal.toFixed(2);
+
+        // ✅ Send update request to backend
+        $.ajax({
+            url: '/change-product-quantity',
+            method: 'POST',
+            data: {
+                user: userid,
+                cart: cartid,
+                product: proid,
+                count: count,
+                quantity: newQuantity,
+                remove: remove
+            },
+            success: function (response) {
+                console.log("Response:", response); // Debugging response from server
+
+                // Remove product if needed
+                if (response.removeproduct || newQuantity === 0) {
+                    alert("Product removed from cart");
+                    itemRow.remove();
                 }
-            });
-        }
-    </script>
+
+                // Update total price safely
+                totalElement.innerText = (response.total || 0).toFixed(2);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", error);
+                alert("Something went wrong. Please try again.");
+            }
+        });
+    }
+</script>
+
+
+
 </body>
 </html>
