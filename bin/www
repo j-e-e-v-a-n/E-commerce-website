@@ -11,11 +11,6 @@ var http = require('http');
 /**
  * Get port from environment and store in Express.
  */
-app.get('/razorpay-keys', (req, res) => {
-  res.json({
-      keyId: process.env.RAZORPAY_KEY_ID
-  });
-});
 
 var port = normalizePort(process.env.PORT || '8080');
 app.set('port', port);

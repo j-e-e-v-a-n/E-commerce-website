@@ -118,7 +118,7 @@
                         <div class="col-md-2 text-right">
                             <div class="quantity-buttons">
                                 <button class="btn btn-sm" onclick="changequantity('{{this._id}}','{{this.product._id}}', -1, 0, '{{../userid}}')">-</button>
-                                <span class="badge badge-secondary" id="{{this.product._id}}">{{this.quantity}}</span>
+                                <span class="badge badge-secondary" id="quantity-{{this.product._id}}">{{this.quantity}}</span>
                                 <button class="btn btn-sm" onclick="changequantity('{{this._id}}','{{this.product._id}}', 1, 0, '{{../userid}}')">+</button>
                             </div>
                         </div>
@@ -126,7 +126,7 @@
                             Rs.{{this.product.price}} 
                         </div>
                         <div class="col-md-2 text-right">
-                            <button class="btn btn-danger" onclick="changequantity('{{this._id}}','{{this.product._id}}', -1, 1)">Remove</button>
+                            <button class="btn btn-danger" onclick="changequantity('{{this._id}}','{{this.product._id}}', -1, 1, '{{../userid}}')">Remove</button>
                         </div>
                     </div>
                 </li>
@@ -147,63 +147,57 @@
         {{/if}}
     </div>
 
-    <!-- jQuery and Bootstrap JS --> 
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Ensure jQuery is loaded -->
-
-<script>
-    function changequantity(cartid, proid, count, remove, userid, price) {
-        let quantityElement = document.getElementById(proid);
-        let totalElement = document.getElementById('total');
-        let itemRow = document.getElementById(`cart-item-${proid}`);
-
-        let currentQuantity = parseInt(quantityElement.innerText) || 0;
-        let totalPrice = parseFloat(totalElement.innerText) || 0;
-
-        let newQuantity = currentQuantity + count;
-        let newTotal = totalPrice + (count * price);
-
-        // Ensure values never go below 0
-        if (newQuantity < 0) return;
-
-        // ✅ Instantly update UI to prevent delay
-        quantityElement.innerText = newQuantity;
-        totalElement.innerText = newTotal.toFixed(2);
-
-        // ✅ Send update request to backend
-        $.ajax({
-            url: '/change-product-quantity',
-            method: 'POST',
-            data: {
-                user: userid,
-                cart: cartid,
-                product: proid,
-                count: count,
-                quantity: newQuantity,
-                remove: remove
-            },
-            success: function (response) {
-                console.log("Response:", response); // Debugging response from server
-
-                // Remove product if needed
-                if (response.removeproduct || newQuantity === 0) {
-                    alert("Product removed from cart");
-                    itemRow.remove();
-                }
-
-                // Update total price safely
-                totalElement.innerText = (response.total || 0).toFixed(2);
-            },
-            error: function (xhr, status, error) {
-                console.error("Error:", error);
-                alert("Something went wrong. Please try again.");
+    <script>
+        function changequantity(cartid, proid, count, remove, userid) {
+            let currentQuantity = parseInt(document.getElementById('quantity-' + proid).innerHTML);
+            console.log("Current quantity for product " + proid + ": " + currentQuantity);
+            
+            let newQuantity = currentQuantity + count;
+            console.log("New quantity: " + newQuantity);
+            
+            // Prevent quantity from going negative or below 1 (unless removing)
+            if (newQuantity < 1 && remove == 0) {
+                alert("Quantity cannot be less than 1");
+                return;
             }
-        });
-    }
-</script>
 
+            // If quantity is 0 or remove is true, mark for removal
+            if (newQuantity == 0 || remove == 1) {
+                remove = 1; // Mark for removal
+                newQuantity = 0; // Set quantity to 0 before removal
+            }
 
-
+            $.ajax({
+                url: '/change-product-quantity',
+                type: 'POST',
+                data: {
+                    user: userid,
+                    cart: cartid,
+                    product: proid,
+                    count: count,
+                    quantity: newQuantity,
+                    remove: remove
+                },
+                success: (response) => {
+                    console.log("Response from server:", response);
+                    if (response.removeproduct) {
+                        alert("Product removed from cart");
+                        location.reload(); // Reload the page to reflect changes
+                    } else {
+                        // Update quantity on success
+                        document.getElementById('quantity-' + proid).innerHTML = newQuantity;
+                        document.getElementById('total').innerHTML = response.total;
+                    }
+                },
+                error: (xhr, status, error) => {
+                    console.error("Error with the request:", error);
+                }
+            });
+        }
+    </script>
 </body>
 </html>

@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Responsive Checkout Form</title>
-    
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>  
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script> <!-- Razorpay script -->
     <style>
         input[type=radio] {
             width: 20px;
@@ -34,7 +32,7 @@
 
 <section>
     <div class="container mt-5">
-        <form id="checkout-form">
+        <form action="" id="checkout-form" onsubmit="return validateForm()">
             <div class="row">
                 <div class="col-md-6">
                     <h2>Enter Delivery Details</h2>
@@ -58,7 +56,7 @@
 
                 <div class="col-md-6">
                     <div class="container mt-5 checkout bg-light">
-                        <h5>Total Amount: Rs.<span id="total-amount">{{total}}</span></h5>
+                        <h5>Total Amount: Rs.{{total}}</h5>
                         <br>
                         <div class="payment">
                             <p>Payment Method</p>
@@ -77,30 +75,32 @@
     </div>
 </section>
 
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Validate form fields
     function validateForm() {
-        const pincodeInput = $('#pincode');
-        const mobileInput = $('#mobile');
+        const pincodeInput = document.getElementById('pincode');
+        const mobileInput = document.getElementById('mobile');
 
-        const pincode = pincodeInput.val();
-        const mobile = mobileInput.val();
+        const pincode = pincodeInput.value;
+        const mobile = mobileInput.value;
 
         let isValid = true;
 
         if (pincode.length !== 6 || isNaN(pincode)) {
-            $('#pincode-error').text('Pincode must be 6 digits long.').show();
+            document.getElementById('pincode-error').innerText = 'Pincode must be 6 digits long.';
+            document.getElementById('pincode-error').style.display = 'block';
             isValid = false;
         } else {
-            $('#pincode-error').hide();
+            document.getElementById('pincode-error').style.display = 'none';
         }
 
         if (mobile.length !== 10 || isNaN(mobile)) {
-            $('#mobile-error').text('Mobile number must be 10 digits long.').show();
+            document.getElementById('mobile-error').innerText = 'Mobile number must be 10 digits long.';
+            document.getElementById('mobile-error').style.display = 'block';
             isValid = false;
         } else {
-            $('#mobile-error').hide();
+            document.getElementById('mobile-error').style.display = 'none';
         }
 
         return isValid;
@@ -114,41 +114,32 @@
                 return;
             }
 
-            let paymentMethod = $("input[name='payment-method']:checked").val();
-
             $.ajax({
                 url: '/place-order',
                 method: 'post',
-                data: $(this).serialize(),
+                data: $('#checkout-form').serialize(),
                 success: function(response) {
-                    if (paymentMethod === "COD") {
+                    console.log(response); // Check the response format
+                    if (response.COD_success) {
                         location.href = '/ordersuccess';
                     } else {
                         razorpayPayment(response);
                     }
-                },
-                error: function() {
-                    alert('Error while placing the order. Please try again.');
                 }
             });
         });
     });
 
-    // Razorpay Payment Integration
     function razorpayPayment(order) {
-        if (!order || !order.id || !order.amount) {
-            alert("Payment error: Order details missing.");
-            return;
-        }
-
+        console.log('Razorpay payment function called'); // Check if the function is triggered
         var options = {
-            "key": "rzp_test_IvGWMBpENteAE2", 
-            "amount": order.amount * 100, // Convert to paisa
+            "key": "rzp_test_IvGWMBpENteAE2", // Replace with your Razorpay Key
+            "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise or INR 500.
             "currency": "INR",
             "name": "Jeevan",
             "description": "Test Transaction",
-            "image": "https://example.com/your_logo",
-            "order_id": order.id,
+            "image": "https://example.com/your_logo", // Replace with your logo URL
+            "order_id": order.id, // Pass the 'id' obtained in the response of Step 1
             "handler": function (response) {
                 verifyPayment(response, order);
             },
@@ -168,11 +159,13 @@
         rzp1.open();
     }
 
-    // Verify Payment after success
     function verifyPayment(payment, order) {
         $.ajax({
             url: '/verify-payment',
-            data: { payment: payment, order: order },
+            data: {
+                payment: payment,
+                order: order
+            },
             method: 'post',
             success: function(response) {
                 if (response.status) {
@@ -180,9 +173,6 @@
                 } else {
                     alert('Payment failed');
                 }
-            },
-            error: function() {
-                alert('Error verifying payment. Please try again.');
             }
         });
     }
